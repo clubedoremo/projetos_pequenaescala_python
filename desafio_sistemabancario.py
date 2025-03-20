@@ -29,7 +29,7 @@ while True:
 
         else:
          saldo += valor_depositado
-         saldo_extrato = saldo
+         saldo_extrato =+ saldo
          print(f'Seu saldo agora é R${saldo},00 Reais')
 
     elif opcao == "s":
