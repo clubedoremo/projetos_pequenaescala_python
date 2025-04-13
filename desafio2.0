@@ -1,0 +1,132 @@
+from datetime import datetime, timedelta, date 
+import pytz
+menu = """
+
+[d] Depositar
+[s] Sacar
+[e] Extrato
+[q] Sair
+[c] Criar Conta
+
+=> """
+
+saldo = 0
+limite = 500
+extrato = ""
+numero_saques = 0
+LIMITE_SAQUES = 3
+LIMITE_GERAL = 10
+numero_de_operacoes =0
+saldo_extrato = 0
+saque_extrato = 0
+extrato_lista = []
+usuario = []
+saque = 0
+saldo_final = 0
+extratos_saque = []
+extratos_deposito = []
+data_de_hoje = datetime.now(pytz.timezone("America/Sao_Paulo")).date()
+
+def verificador_de_data():
+   global data_de_hoje, numero_de_operacoes
+   if data_de_hoje == datetime.now(pytz.timezone("America/Sao_Paulo")).date(): 
+            numero_de_operacoes += 1
+
+
+def criar_usuario():
+    global usuario, nome, data_nascimento, cpf, endereco
+    nome = input("Insira seu nome: ")
+    data_nascimento = input("Insira sua data de nascimento: ")
+    cpf = input("Insira seu cpf: ")
+    endereco = input("Insira seu endereço: ")
+    usuario = {"nome": nome, "data_nascimento": data_nascimento, "cpf":cpf, "endereço": endereco}
+
+
+def extrato_deposito():
+    global extrato_deposito_lista, saldo, extratos_deposito
+    horario = datetime.now()
+    extrato_deposito_lista = {"tipo": saldo, "horário": horario}    
+    # Adiciona extrato à lista
+    extratos_deposito.append(extrato_deposito_lista)
+
+def extrato_saque():
+    global extrato_lista, extratos_saque, saque
+    horario = datetime.now()
+    extratos_saque = {"tipo": saque, "horário": horario}
+    extrato_lista.append(extratos_saque)
+
+
+
+def extratos():
+    print(f'O usuario {usuario["nome"]}:')
+    for i, e in enumerate(extratos_deposito):
+        print(f"{i+1}: Depositou R${e['tipo']},00 às {e['horário'].strftime('%H:%M:%S')}")    
+    for i, e in enumerate(extrato_lista):
+        print(f"{i+1}: Sacou R${e['tipo']},00 às {e['horário'].strftime('%H:%M:%S')}")
+
+def depositar():
+   global saldo
+   valor_depositado = int(input("insira o valor que você quer depositar\n"))
+   if valor_depositado < 0:
+          print(f'insira um valor positivo.')  
+          
+
+   else:
+         saldo += valor_depositado
+         print(f'Seu saldo agora é R${saldo},00 Reais')
+         verificador_de_data()
+         extrato_deposito()
+
+
+def sacar():
+   global saldo, numero_saques, LIMITE_SAQUES, saldo_final,saque_valor, saque_extrato, data_de_hoje, saque
+   numero_de_operacoes =+ 1
+   saque = int(input("insira o valor que você quer sacar\n"))
+        #Caso o saque não seja negativo, maior que 500 ou maior que o saldo ele continua o saque
+   if (saque < 0) or (saque >500):
+           print("Valor inválido, tente novamente ")
+   elif saque > saldo:
+           print("Seu saque é maior que seu saldo! Deposite primeiro!")
+   else:
+            #Caso o numero de saques seja igual o limite, restringe o usuario e incrementa o valor do numero de saques para o extrato 
+          if numero_saques == LIMITE_SAQUES:
+           print(f"Você alcançou o limite de {numero_saques} saques diários ")
+          else:
+           saldo = saldo - saque
+           numero_saques += 1
+           saldo_final = saldo
+           print(f'Depois de seu saque de R${saque},00 Reais Seu saldo atual é de R${saldo},00 Reais!')
+           verificador_de_data()
+           extrato_saque()
+
+
+if not usuario:
+    print('Detectamos que você não tem uma conta, vamos cria-lá!')
+    criar_usuario()
+
+while True:
+    
+
+    if numero_de_operacoes ==  LIMITE_GERAL:
+        print('Você alcançou o limite de operações diárias, tente amanhã!')
+        break
+    else:
+       opcao = input(menu)
+ 
+       if opcao == "d":
+        depositar()
+       
+
+       elif opcao == "s":
+        sacar()
+              
+       elif opcao == "e":
+         extratos()
+       elif opcao == "q":
+           break
+       elif opcao == "c":
+        criar_usuario()
+       else:
+        print("Operação inválida, por favor selecione novamente a operação desejada.")
+
+print("Obrigado por usar nosso sistema bancário!")
