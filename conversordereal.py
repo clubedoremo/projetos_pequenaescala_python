@@ -29,7 +29,7 @@ class usuario:
 
 
         elif self.escolha == ".":
-           print("OBRIGADO POR USAR NOSSA CALCULADORA")
+           print("OBRIGADO POR USAR NOSSO CONVERSOR")
            break
 
 
